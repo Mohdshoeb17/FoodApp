@@ -1,88 +1,110 @@
-import React, { useContext, useEffect } from 'react'
+
+import React, { useContext, useEffect } from "react";
 import { MdFastfood } from "react-icons/md";
 import { FaSearch } from "react-icons/fa";
 import { FiShoppingBag } from "react-icons/fi";
-import { dataContext } from '../contennt/UserContext';
-import { food_items } from '../Food';
-import { useSelector } from 'react-redux';
-import { Link, useNavigate } from 'react-router-dom';
+import { dataContext } from "../contennt/UserContext";
+import { food_items } from "../Food";
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
 function NavComponent() {
-  let { input, setinput, cate, setcate, showCart, setshowCart, user, setUser } = useContext(dataContext)
-  console.log(user);
-  
-  const items = useSelector(state => state.cart)
-  const navigate = useNavigate()
+  const {
+    input,
+    setinput,
+    setcate,
+    showCart,
+    setshowCart,
+    user,
+    setUser,
+  } = useContext(dataContext);
 
-  // search filter
+  const items = useSelector((state) => state.cart);
+  const navigate = useNavigate();
+
+  // Search filter
   useEffect(() => {
-    let newlist = food_items.filter((item) =>
+    const newlist = food_items.filter((item) =>
       item.food_name.toLowerCase().includes(input.toLowerCase())
-    )
-    setcate(newlist)
-  }, [input])
+    );
+    setcate(newlist);
+  }, [input, setcate]);
 
-  // logout handler
-    const handleLogout=(e)=>{
-      // const user=useContext(dataContext())
-      // console.log(user);
-      localStorage.removeItem('token')
-      localStorage.removeItem('loggedInUser')
-      setTimeout(()=>{
-       navigate('/login')
-      },1000)
-      handleSuccess('User Logout')
-    }
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("loggedInUser");
+    setUser(null);
+    navigate("/login");
+  };
 
   return (
-    <div className='w-full h-[100px] flex justify-between items-center px-1 md:px-8'>
-      {/* Logo */}
-      <div className='p-3 bg-white flex items-center justify-center rounded-md shadow-xl'>
-        <MdFastfood className=' md:w-[30px] md:h-[30px] text-green-500' />
-      </div>
+    <nav className="w-full bg-gray-50 px-4 py-4 md:px-8">
+      <div className="flex flex-wrap items-center justify-between gap-y-4 md:flex-nowrap md:gap-6">
 
-      {/* Search */}
-      <form
-        className='w-[50%] md:w-[70%] h-[45px] md:h-[60px] bg-white flex items-center px-5 gap-5 rounded-md shadow-md'
-        onSubmit={(e) => e.preventDefault()}
-      >
-        <FaSearch className='text-green-500 w-[20px] h-[20px]' />
-        <input
-          className='outline-none  md:py-2 w-full text-[16px] md:text-xl'
-          type="text"
-          placeholder='search'
-          onChange={(e) => setinput(e.target.value)}
-          value={input}
-        />
-      </form>
+        {/* Logo */}
+        <Link
+          to="/"
+          className="order-1 flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white shadow-md md:h-14 md:w-14"
+        >
+          <MdFastfood className="text-2xl text-green-500 md:text-3xl" />
+        </Link>
 
-      {/* Signup / Logout */}
-      <div className='  md:text-[20px]'>
-        {user ?  (<div>
-                <button onClick={handleLogout} className='bg-green-600 md:px-3  py-1  md:py-2 text-white font-semibold'>logout</button>
-               {/* <ToastContainer/> */}
-            </div>
-         ): (
-          <Link to='/login'>
-            <button className='bg-green-00 px-3 py-1 md:py-2 text-white font-semibold'>
-              Login
+        {/* Search Bar */}
+        <form
+          className="order-4 flex h-12 w-full items-center gap-3 rounded-lg bg-white px-4 shadow-md md:order-2 md:h-14 md:min-w-0 md:flex-1"
+          onSubmit={(e) => e.preventDefault()}
+        >
+          <FaSearch className="shrink-0 text-lg text-green-500" />
+
+          <input
+            type="text"
+            placeholder="Search food..."
+            value={input}
+            onChange={(e) => setinput(e.target.value)}
+            className="w-full min-w-0 bg-transparent text-sm outline-none placeholder:text-gray-400 md:text-lg"
+          />
+        </form>
+
+        {/* Login / Logout */}
+        <div className="order-2 ml-auto shrink-0 md:order-3 md:ml-0">
+          {user ? (
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700 md:px-5 md:py-3 md:text-base"
+            >
+              Logout
             </button>
-          </Link>
-        )}
-      </div>
+          ) : (
+            <Link
+              to="/login"
+              className="inline-block rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-green-700 md:px-5 md:py-3 md:text-base"
+            >
+              Login
+            </Link>
+          )}
+        </div>
 
-      {/* Cart */}
-      <div
-        className='w-[40px] h-[40px] md:w-[55px] md:h-[55px] bg-white flex items-center justify-center rounded-md shadow-xl relative'
-        onClick={() => setshowCart(true)}
-      >
-        <span className='absolute top-0 right-2 text-green-500 font-bold  text-[14px] md:text-[18px] cursor-pointer'>
-          {items.length}
-        </span>
-        <FiShoppingBag className=' md:w-[30px] md:h-[30px] text-green-500' />
+        {/* Cart */}
+        <button
+          type="button"
+          aria-label={`Open cart with ${items.length} items`}
+          onClick={() => setshowCart(true)}
+          className="order-3 relative flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white shadow-md md:order-4 md:h-14 md:w-14"
+        >
+          <FiShoppingBag className="text-2xl text-green-500 md:text-3xl" />
+
+          {items.length > 0 && (
+            <span className="absolute -right-1 -top-2 flex h-5 min-w-5 items-center justify-center rounded-full bg-green-600 px-1 text-xs font-bold text-white">
+              {items.length}
+            </span>
+          )}
+        </button>
+
       </div>
-    </div>
-  )
+    </nav>
+  );
 }
 
-export default NavComponent
+export default NavComponent;

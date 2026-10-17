@@ -1,4 +1,3 @@
-
 const joi=require('joi');
 const signuValidation=async(req,res,next)=>{
       const schema=joi.object({
@@ -8,9 +7,8 @@ const signuValidation=async(req,res,next)=>{
       })
       const {error}=schema.validate(req.body);
       if(error){
-        return res.status(400).json({message:"Bad request",error})
-      }
-      next();
+        return res.status(400).json({message:"Bad request",error})}
+        next()
 }
 const loginValidation=async(req,res,next)=>{
       const schema=joi.object({
@@ -23,7 +21,6 @@ const loginValidation=async(req,res,next)=>{
       }
       next();
 }
-
 module.exports={
     signuValidation,
     loginValidation
